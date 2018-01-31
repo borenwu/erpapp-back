@@ -1,3 +1,6 @@
+const bcrypt = require('bcrypt');
+const CompanyService = require('../services/companyService')
+
 /**
  * UserController
  *
@@ -16,18 +19,16 @@ module.exports = {
     let password = req.param('password')
 
     if (!companyName) {
-      return res.badRequest({err: 'Invalid company_name'});
+      return res.badRequest({ err: 'Invalid company_name' });
     }
 
     if (!userName) {
-      return res.badRequest({err: 'Invlaid user_name'});
+      return res.badRequest({ err: 'Invlaid user_name' });
     }
 
-    Company.findOne({company_name: companyName})
-      .then(_company => {
-        if (!_company) throw new Error('Unable to find company record');
-        return _company;
-      })
+
+
+    CompanyService.checkCompanyName(companyName)
       .then(_company => {
         return User.create({
           user_name: userName,
@@ -49,11 +50,13 @@ module.exports = {
     let password = req.param('password')
     let companyName = req.param('company_name')
 
-    User.findOne({user_name: user_name, password: password})
-      .populate('company')
+    CompanyService.checkCompanyName(companyName)
+      .then(_company => {
+        return User.findOne({ company: _company.id, user_name: user_name }).populate('company')
+      })
       .then(_user => {
-
-        if (!_user) throw new Error('user not found');
+        if (!_user) throw new Error('user not found')
+        if (!bcrypt.compare(password, _user.password)) throw new Error('Invalid Password')
 
         _user.login = true
         _user.save()
@@ -64,13 +67,13 @@ module.exports = {
 
   logout: function (req, res) {
     let user_name = req.param('user_name')
-    let password = req.param('password')
     let companyName = req.param('company_name')
 
-    User.findOne({user_name: user_name, password: password})
-      .populate('company')
+    CompanyService.checkCompanyName(companyName)
+      .then(_company => {
+        return User.findOne({ company: _company.id, user_name: user_name }).populate('company')
+      })
       .then(_user => {
-
         if (!_user) throw new Error('user not found');
 
         _user.login = false
