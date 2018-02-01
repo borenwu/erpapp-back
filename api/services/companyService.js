@@ -1,5 +1,6 @@
 const CompanyService = {
-    checkCompanyName: function(companyName) {
+
+  checkCompanyName: function(companyName) {
         return new Promise((resolve, reject) => {
             Company.findOne({ company_name: companyName })
                 .then(_company => {

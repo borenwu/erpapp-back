@@ -1,5 +1,5 @@
-const bcrypt = require('bcrypt');
 const CompanyService = require('../services/companyService')
+const PasswordService = require('../services/PasswordService')
 
 /**
  * UserController
@@ -17,15 +17,15 @@ module.exports = {
     let companyName = req.param('company_name')
     let userName = req.param('user_name')
     let password = req.param('password')
+    let level = req.param('level')
 
     if (!companyName) {
-      return res.badRequest({ err: 'Invalid company_name' });
+      return res.badRequest({err: 'Invalid company_name'});
     }
 
     if (!userName) {
-      return res.badRequest({ err: 'Invlaid user_name' });
+      return res.badRequest({err: 'Invlaid user_name'});
     }
-
 
 
     CompanyService.checkCompanyName(companyName)
@@ -34,6 +34,7 @@ module.exports = {
           user_name: userName,
           password: password,
           login: false,
+          level:level,
           company: _company.id
         });
 
@@ -52,11 +53,11 @@ module.exports = {
 
     CompanyService.checkCompanyName(companyName)
       .then(_company => {
-        return User.findOne({ company: _company.id, user_name: user_name }).populate('company')
+        return User.findOne({company: _company.id, user_name: user_name}).populate('company')
       })
       .then(_user => {
         if (!_user) throw new Error('user not found')
-        if (!bcrypt.compare(password, _user.password)) throw new Error('Invalid Password')
+        if (!PasswordService.checkPassword(password, _user.password)) throw new Error('Invalid Password')
 
         _user.login = true
         _user.save()
@@ -68,10 +69,11 @@ module.exports = {
   logout: function (req, res) {
     let user_name = req.param('user_name')
     let companyName = req.param('company_name')
+    let userId = req.param('user_id')
 
     CompanyService.checkCompanyName(companyName)
       .then(_company => {
-        return User.findOne({ company: _company.id, user_name: user_name }).populate('company')
+        return User.findOne({company: _company.id, user_name: user_name}).populate('company')
       })
       .then(_user => {
         if (!_user) throw new Error('user not found');

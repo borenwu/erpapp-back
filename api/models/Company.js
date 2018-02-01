@@ -9,6 +9,11 @@ module.exports = {
     users: {
       collection: 'user',
       via: 'company'
+    },
+
+    clients:{
+      collection:'client',
+      via:'company'
     }
   }
 };

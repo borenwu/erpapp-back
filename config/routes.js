@@ -49,5 +49,11 @@ module.exports.routes = {
   //user
   'POST /user': 'UserController.create',
   'POST /user/login': 'UserController.login',
+  'POST /user/logout': 'UserController.logout',
 
+  //client
+  'POST /client': 'ClientController.create',
+  'DELETE /client': 'ClientController.delete',
+  'POST /clients': 'ClientController.listAllClients',
+  'PUT /client': 'ClientController.update',
 };
