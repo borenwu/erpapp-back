@@ -9,6 +9,10 @@ module.exports = {
   tableName: "suppliers",
   attributes: {
 
+    accounts:{
+      collection:'account',
+      via:'supplier'
+    }
   }
 };
 

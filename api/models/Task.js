@@ -9,7 +9,7 @@ module.exports = {
   tableName: "tasks",
 
   attributes: {
-    task_date: {type: 'datetime', required: true},
+    task_date: {type: 'date', required: true},
     task_name: {type: 'string', required: true},
     desc: {type: 'string'},
     volume: {type: 'float', required: true, default: 0.0},

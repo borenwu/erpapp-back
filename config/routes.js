@@ -56,4 +56,6 @@ module.exports.routes = {
   'DELETE /client': 'ClientController.delete',
   'POST /clients': 'ClientController.listAllClients',
   'PUT /client': 'ClientController.update',
+
+  //client account ops
 };

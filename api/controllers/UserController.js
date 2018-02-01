@@ -46,6 +46,69 @@ module.exports = {
       .catch(err => res.serverError(err.message));
   },
 
+  delete: function (req, res) {
+    let companyName = req.param('company_name')
+    let userName = req.param('user_name')
+    let userId = req.param('user_id') || ''
+
+    CompanyService.checkCompanyName(companyName)
+      .then(_company => {
+        return User.destroy({user_name: userName, company_id: _company.id})
+      })
+      .then(_user => {
+        if (!_user || _user.length === 0) return res.notFound({err: 'No user found in our record'});
+        return res.ok(`User is deleted with name ${userName}`);
+      })
+  },
+
+  listAllUsers: function (req, res) {
+    let companyName = req.param('company_name')
+    CompanyService.checkCompanyName(companyName)
+      .then(_company => {
+        return User.find({company_id: _company.id})
+      })
+      .then(_users => {
+        if (!_users || _users.length === 0) {
+          throw new Error('No user found');
+        }
+        return res.ok(_users);
+      })
+      .catch(err => res.serverError(err));
+  },
+
+
+  update: function (req, res) {
+    let userName = req.param('user_name')
+    let userId = req.param('user_id')
+    let level = req.param('level')
+
+    if (!userId) return res.badRequest({err: 'user id is missing'});
+
+    let user = {};
+
+    if (userName) {
+      user.user_name = userName;
+    }
+    if (level) {
+      user.level = level;
+    }
+
+    CompanyService.checkCompanyName(companyName)
+      .then(_company=>{
+        User.update({id:userId,company_id:_company.id},user)
+      })
+      .then(_user=>{
+        if (!_user[0] || _user[0].length === 0) return res.notFound({err: 'No user found'});
+        return res.ok(_user);
+      })
+      .catch(err=> res.serverError(err))
+  },
+
+  changePassword:function (req,res) {
+    //change password
+  },
+
+
   login: function (req, res) {
     let user_name = req.param('user_name')
     let password = req.param('password')

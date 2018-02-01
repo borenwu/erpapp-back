@@ -13,7 +13,7 @@ module.exports = {
     desc: {type: 'string'},
     receivable: {type: 'float'},
 
-    account_operation:{type:'array'},
+    // account_operation:{type:'array'},
 
     company: {model: 'company', columnName: 'company_id', required: true},
 
@@ -21,6 +21,11 @@ module.exports = {
       collection: 'task',
       via: 'client'
     },
+
+    accounts:{
+      collection:'account',
+      via:'client'
+    }
 
   }
 };
