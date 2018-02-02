@@ -12,9 +12,14 @@ module.exports = {
     task_date: {type: 'date', required: true},
     task_name: {type: 'string', required: true},
     desc: {type: 'string'},
-    volume: {type: 'float', required: true, default: 0.0},
-    price: {type: 'float', required: true, default: 0.0},
-    sale: {type: 'float', required: true, default: 0.0},
+    volume: {type: 'float', required: true},
+    price: {type: 'float', required: true},
+    sale: {type: 'float', required: true},
+    maker:{type:'string'},
+    make_time:{type:'datetime'},
+    checker:{type:'string'},
+    check_time:{type:'datetime'},
+
 
     client: {model: 'client', columnName: 'client_id', required: true},
   }

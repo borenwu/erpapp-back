@@ -1,4 +1,4 @@
-const CompanyService = require('../services/companyService')
+const CheckService = require('../services/checkService')
 const PasswordService = require('../services/PasswordService')
 
 /**
@@ -28,7 +28,7 @@ module.exports = {
     }
 
 
-    CompanyService.checkCompanyName(companyName)
+    CheckService.checkCompanyName(companyName)
       .then(_company => {
         return User.create({
           user_name: userName,
@@ -51,9 +51,9 @@ module.exports = {
     let userName = req.param('user_name')
     let userId = req.param('user_id') || ''
 
-    CompanyService.checkCompanyName(companyName)
+    CheckService.checkCompanyName(companyName)
       .then(_company => {
-        return User.destroy({user_name: userName, company_id: _company.id})
+        return User.destroy({id: userId, company_id: _company.id})
       })
       .then(_user => {
         if (!_user || _user.length === 0) return res.notFound({err: 'No user found in our record'});
@@ -63,7 +63,7 @@ module.exports = {
 
   listAllUsers: function (req, res) {
     let companyName = req.param('company_name')
-    CompanyService.checkCompanyName(companyName)
+    CheckService.checkCompanyName(companyName)
       .then(_company => {
         return User.find({company_id: _company.id})
       })
@@ -93,7 +93,7 @@ module.exports = {
       user.level = level;
     }
 
-    CompanyService.checkCompanyName(companyName)
+    CheckService.checkCompanyName(companyName)
       .then(_company=>{
         User.update({id:userId,company_id:_company.id},user)
       })
@@ -114,7 +114,7 @@ module.exports = {
     let password = req.param('password')
     let companyName = req.param('company_name')
 
-    CompanyService.checkCompanyName(companyName)
+    CheckService.checkCompanyName(companyName)
       .then(_company => {
         return User.findOne({company: _company.id, user_name: user_name}).populate('company')
       })
@@ -134,7 +134,7 @@ module.exports = {
     let companyName = req.param('company_name')
     let userId = req.param('user_id')
 
-    CompanyService.checkCompanyName(companyName)
+    CheckService.checkCompanyName(companyName)
       .then(_company => {
         return User.findOne({company: _company.id, user_name: user_name}).populate('company')
       })

@@ -4,7 +4,7 @@
  * @description :: Server-side logic for managing Clients
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-const CompanyService = require('../services/companyService')
+const CheckService = require('../services/checkService')
 
 module.exports = {
 
@@ -23,7 +23,7 @@ module.exports = {
     }
 
 
-    CompanyService.checkCompanyName(companyName)
+    CheckService.checkCompanyName(companyName)
       .then(_company => {
         return Client.create({
           client_name: clientName,
@@ -42,21 +42,21 @@ module.exports = {
   delete: function (req, res) {
     let companyName = req.param('company_name')
     let clientName = req.param('client_name')
-    let clientId = req.param('client_id') || ''
+    let clientId = req.param('client_id')
 
-    CompanyService.checkCompanyName(companyName)
+    CheckService.checkCompanyName(companyName)
       .then(_company => {
-        return Client.destroy({client_name: clientName, company_id: _company.id})
+        return Client.destroy({id: clientId, company_id: _company.id})
       })
       .then(_client => {
         if (!_client || _client.length === 0) return res.notFound({err: 'No client found in our record'});
-        return res.ok(`Client is deleted with name ${clientName}`);
+        return res.ok(`Client is deleted with name ${_client.client_name}`);
       })
   },
 
   listAllClients: function (req, res) {
     let companyName = req.param('company_name')
-    CompanyService.checkCompanyName(companyName)
+    CheckService.checkCompanyName(companyName)
       .then(_company => {
         return Client.find({company_id: _company.id})
       })
@@ -91,7 +91,7 @@ module.exports = {
     }
 
 
-    CompanyService.checkCompanyName(companyName)
+    CheckService.checkCompanyName(companyName)
       .then(_company => {
         return Client.update({id: clientId, company_id: _company.id}, client)
       })

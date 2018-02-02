@@ -57,5 +57,6 @@ module.exports.routes = {
   'POST /clients': 'ClientController.listAllClients',
   'PUT /client': 'ClientController.update',
 
-  //client account ops
+  //tasks
+  'POST /task': 'TaskController.create',
 };
