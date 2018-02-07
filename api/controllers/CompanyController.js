@@ -16,7 +16,7 @@ module.exports = {
 
 
     if (!companyName) {
-      return res.badRequest({err: 'Invalid company_name'});
+      return res.badRequest({ err: 'Invalid company_name' });
     }
 
     Company.create({
@@ -24,11 +24,23 @@ module.exports = {
       secret: secret,
     })
       .then(_company => {
-        if (!_company) return _company.serverError({err: 'Unable to create company'});
+        if (!_company) return _company.serverError({ err: 'Unable to create company' });
 
         return res.ok(_company); //to learn more about responses check api/responses folder
       })
       .catch(err => res.serverError(err.message));
-  }
+  },
+
+  listAllCompanies: function (req, res) {
+    Company.find({})
+      .then(_companies => {
+        if (!_companies || _companies.length === 0) {
+          throw new Error('No company found');
+        }
+        return res.ok(_companies);
+      })
+      .catch(err=> res.serverError(err))
+  },
+
 };
 

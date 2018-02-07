@@ -10,6 +10,7 @@ module.exports = {
 
   attributes: {
     task_date: {type: 'date', required: true},
+	due_date:{type:'date',required:true},
     task_name: {type: 'string', required: true},
     desc: {type: 'string'},
     volume: {type: 'float', required: true},

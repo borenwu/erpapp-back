@@ -78,7 +78,7 @@ module.exports = {
       .catch(err => res.serverError(err));
   },
 
-  checkSale: function (req, res) {
+  updateSale: function (req, res) {
     let companyId = req.param('company_id')
     let clientName = req.param('client_name')
     let taskId = req.param('task_id')

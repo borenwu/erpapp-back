@@ -45,6 +45,7 @@ module.exports.routes = {
   ***************************************************************************/
   //company
   '/POST /company': 'CompanyController.create',
+  '/GET /company': 'CompanyController.listAllCompanies',
 
   //user
   'POST /user': 'UserController.create',
