@@ -102,5 +102,34 @@ module.exports = {
       .catch(err => res.serverError(err))
   },
 
+
+  updateById: function (req, res) {
+    let clientId = req.param('client_id') || ''
+    let desc = req.param('desc') || ''
+    let receivable = Number(req.param('receivable')) || 0.0
+  
+    if (!clientId) return res.badRequest({err: 'client id is missing'});
+  
+    let client = {};
+  
+    if (desc) {
+      client.desc = desc;
+    }
+    if (receivable) {
+      client.receivable = receivable;
+    }
+    
+    Client.update({id:clientId},client)
+      .then(_client=>{
+        if (!_client[0] || _client[0].length === 0) return res.notFound({err: 'No client found'});
+        return res.ok(_client);
+      })
+      .catch(err => res.serverError(err))
+  }
+  
+
 };
+
+
+
 
