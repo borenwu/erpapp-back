@@ -10,8 +10,7 @@ const CheckService = {
             Company.findOne({ company_name: companyName })
                 .then((_company,err) => {
                     if (err) reject(err)
-                    if (!_company) reject(new Error('Unable to find client record'))
-                    console.log(_company)
+                    if (!_company) reject(new Error('Unable to find client record'))               
                     resolve(_company)
                 })
         })

@@ -105,12 +105,17 @@ module.exports = {
 
   updateById: function (req, res) {
     let clientId = req.param('client_id') || ''
+    let clientName = req.param('client_name')
     let desc = req.param('desc') || ''
     let receivable = Number(req.param('receivable')) || 0.0
   
     if (!clientId) return res.badRequest({err: 'client id is missing'});
   
     let client = {};
+
+    if(clientName){
+      client.client_name = clientName
+    }
   
     if (desc) {
       client.desc = desc;
@@ -125,6 +130,23 @@ module.exports = {
         return res.ok(_client);
       })
       .catch(err => res.serverError(err))
+  },
+
+  getClientById: function (req, res) {
+    let clientId = req.params.id
+    
+    Client.findOne({id:clientId}).populate('company')
+      .then((_client,err)=>{
+        if (err) {
+          return res.serverError(err);
+        }
+        if (!_client) {
+          return res.notFound('Could not find client, sorry.');
+        }
+      
+        
+        return res.json(_client);
+      })
   }
   
 
