@@ -14,6 +14,11 @@ module.exports = {
     clients:{
       collection:'client',
       via:'company'
+    },
+
+    tasks:{
+      collection:'task',
+      via:'company'
     }
   }
 };

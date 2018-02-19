@@ -57,10 +57,14 @@ module.exports.routes = {
   'DELETE /client': 'ClientController.delete',
   'POST /clients': 'ClientController.listAllClients',
   'PUT /client': 'ClientController.update',
-  'PUT /client/:id': 'ClientController.updateById',
+  // 'PUT /client/:id': 'ClientController.updateById',
   'GET /client/:id': 'ClientController.getClientById',
   'DELETE /client/:id': 'ClientController.deleteClientById',
 
   //tasks
   'POST /task': 'TaskController.create',
+  'POST /tasks': 'TaskController.listAllTasksByCompany',
+  'DELETE /task': 'TaskController.delete',
+  'DELETE /task/:id': 'TaskController.deleteTaskById',
+  'PUT /task': 'TaskController.update',
 };

@@ -12,35 +12,39 @@ module.exports = {
     let companyId = req.param('company_id')
     let clientName = req.param('client_name')
     let taskDate = req.param('task_date')
+    let dueDate = req.param('due_date')
     let taskName = req.param('task_name')
     let desc = req.param('desc') || ''
     let volume = Number(req.param('volume')) || 0.0
     let price = Number(req.param('price')) || 0.0
     let sale = Number(req.param('sale')) || 0.0
     let maker = req.param('maker')
-    let make_time = new Date()
+    let make_time = req.param('make_time')
 
 
-    if (!clientId) {
-      return res.badRequest({err: 'Invlaid client_id'});
+    if (!companyId) {
+      return res.badRequest({err: 'Invlaid companyId'});
     }
 
     CheckService.checkClientName(companyId,clientName)
       .then(_client => {
         return Task.create({
           task_date: taskDate,
+          due_date:dueDate,
           task_name:taskName,
           desc: desc,
           volume:volume,
           price:price,
           sale:sale,
           client: _client.id,
+          company:companyId,
           maker:maker,
           make_time:make_time
         });
       })
       .then(_task => {
         if (!_task) throw new Error('Unable to create new client')
+        _task.client_name = clientName
         return res.ok(_task)
       })
       .catch(err => res.serverError(err.message));
@@ -57,17 +61,101 @@ module.exports = {
       })
       .then(_task => {
         if (!_task || _task.length === 0) return res.notFound({err: 'No task found in our record'});
-        return res.ok(`Task is deleted with name ${_task.task_name}`);
+        return res.ok({status:200,msg:'delete ok'});
       })
   },
 
-  listAllTasks: function (req, res) {
+  deleteTaskById: function (req, res) {
+    let taskId = req.params.id
+
+    Task.destroy({ id: taskId })
+      .then(_task => {
+        if (!_task || _task.length === 0) return res.notFound({ err: 'No task found in our record' });
+        return res.ok({status:200,msg:'delete ok'});
+      })
+  },
+
+  update: function (req, res) {
+    let taskId = req.param('task_id')
     let companyId = req.param('company_id')
     let clientName = req.param('client_name')
+    let dueDate = req.param('due_date')
+    let taskName = req.param('task_name')
+    let desc = req.param('desc')
+    let volume = Number(req.param('volume'))
+    let maker = req.param('maker')
+
+    if (!taskId) return res.badRequest({ err: 'task id is missing' });
+
+    let task = {};
+
+    if(taskName){
+      task.task_name = taskName
+    }
+    if(dueDate){
+      task.due_date = dueDate
+    }
+    if(desc){
+      task.desc = desc
+    }
+    if(volume){
+      task.volume = volume
+    }
+    if(maker){
+      task.maker = maker
+    }
 
     CheckService.checkClientName(companyId,clientName)
       .then(_client => {
-        return Task.find({client_id: _client.id})
+        return Task.update({id: taskId, client_id: _client.id},task)
+      })
+      .then(_task => {
+        if (!_task[0] || _task[0].length === 0) return res.notFound({err: 'No task found in our record'});
+        Task.findOne({id:_task[0].id}).populate('client')
+          .then((task,err)=>{
+            if (err) {
+              return res.serverError(err);
+            }
+            task.client_name = task.client.client_name
+            task.client_id = task.client.id
+            return res.ok(task);
+          })
+      })
+      .catch(err => res.serverError(err))
+  },
+
+  listAllTasksByCompany:function (req,res) {
+    // console.log('listAllTasksByCompany')
+    let companyId = req.param('company_id')
+    let startDate = req.param('start_date')
+    let endDate = req.param('end_date')
+
+    Task.find({company_id:companyId,task_date:{'>=':startDate,'<=':endDate}}).populate('client')
+      .then(_tasks =>{
+        if (!_tasks ) {
+          throw new Error('No task found');
+        }
+        if(_tasks.length === 0){
+          return res.ok({status:201,msg:'tasks empty'});
+        }
+        _tasks.map(t=>{
+          t.client_name = t.client.client_name
+          t.client_id = t.client.id
+        })
+        return res.ok(_tasks);
+      })
+      .catch(err => res.serverError(err));
+  },
+
+  listAllTasksByClientDue: function (req, res) {
+    let companyId = req.param('company_id')
+    let clientName = req.param('client_name')
+    let startDate = req.param('start_date')
+    let endDate = req.param('end_date')
+
+    CheckService.checkClientName(companyId,clientName)
+      .then(_client => {
+        return Task.find({client_id: _client.id,due_date:{'>=':startDate,'<=':endDate}})
       })
       .then(_tasks => {
         if (!_tasks || _tasks.length === 0) {
@@ -87,7 +175,7 @@ module.exports = {
     let checker = req.param('checker')
     let check_time = new Date()
 
-    CheckService.checkCompanyName(companyId,clientName)
+    CheckService.checkClientName(companyId,clientName)
       .then(_client => {
         return Task.findOne({id: taskId, client_id: _client.id})
       })

@@ -10,7 +10,7 @@ module.exports = {
 
   attributes: {
     task_date: {type: 'date', required: true},
-	due_date:{type:'date',required:true},
+	  due_date:{type:'date',required:true},
     task_name: {type: 'string', required: true},
     desc: {type: 'string'},
     volume: {type: 'float', required: true},
@@ -23,6 +23,7 @@ module.exports = {
 
 
     client: {model: 'client', columnName: 'client_id', required: true},
+    company: {model: 'company', columnName: 'company_id', required: true},
   }
 };
 
