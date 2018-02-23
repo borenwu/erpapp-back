@@ -6,10 +6,11 @@
  */
 
 module.exports = {
+  tableName: "accounts",
 
   attributes: {
-    opdate:{type:'date'},
-    account_name:{type:'string',required:true},
+    op_date:{type:'date'},
+    op_name:{type:'string',required:true},
     direction:{type:'string', enum: ['借', '贷']},
     amount:{type:'float'},
 

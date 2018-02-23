@@ -14,6 +14,7 @@ module.exports = {
     task_name: {type: 'string', required: true},
     desc: {type: 'string'},
     volume: {type: 'float', required: true},
+    status:{type:'boolean'},
     price: {type: 'float', required: true},
     sale: {type: 'float', required: true},
     maker:{type:'string'},

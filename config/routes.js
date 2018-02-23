@@ -67,4 +67,6 @@ module.exports.routes = {
   'DELETE /task': 'TaskController.delete',
   'DELETE /task/:id': 'TaskController.deleteTaskById',
   'PUT /task': 'TaskController.update',
+  'PUT /task/finish': 'TaskController.finishTask',
+  'PUT /task/sale': 'TaskController.updateSale',
 };

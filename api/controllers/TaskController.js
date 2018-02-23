@@ -5,6 +5,7 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 const CheckService = require('../services/checkService')
+const AccountService = require('../services/AccountService')
 
 module.exports = {
 
@@ -20,6 +21,7 @@ module.exports = {
     let sale = Number(req.param('sale')) || 0.0
     let maker = req.param('maker')
     let make_time = req.param('make_time')
+    let checker = req.param('checker') || ''
 
 
     if (!companyId) {
@@ -34,12 +36,14 @@ module.exports = {
           task_name:taskName,
           desc: desc,
           volume:volume,
+          status:false,
           price:price,
           sale:sale,
           client: _client.id,
           company:companyId,
           maker:maker,
-          make_time:make_time
+          make_time:make_time,
+          checker:checker
         });
       })
       .then(_task => {
@@ -166,6 +170,8 @@ module.exports = {
       .catch(err => res.serverError(err));
   },
 
+  ////////////////////////////////////////////////////////////////////////////////
+
   updateSale: function (req, res) {
     let companyId = req.param('company_id')
     let clientName = req.param('client_name')
@@ -175,20 +181,68 @@ module.exports = {
     let checker = req.param('checker')
     let check_time = new Date()
 
+    let task = {}
+
+    task.price = price
+    task.sale = sale
+    task.checker = checker
+    task.check_time = check_time
+
     CheckService.checkClientName(companyId,clientName)
       .then(_client => {
-        return Task.findOne({id: taskId, client_id: _client.id})
+        // _client.receivable = Number(_client.receivable) + Number(sale)
+        // _client.save()
+        return Task.update({id: taskId, client_id: _client.id},task)
       })
       .then(_task => {
-        if (!_task[0] || _task[0].length === 0) return res.notFound({err: 'No task found'});
-        _task.price = price
-        _task.sale = sale
-        _task.checker = checker
-        _task.check_time = check_time
-        _task.save()
-        return res.ok(_task);
+
+
+        if (!_task[0] || _task[0].length === 0) return res.notFound({err: 'No task found in our record'});
+        Task.findOne({id:_task[0].id}).populate('client')
+          .then((task,err)=>{
+            if (err) {
+              return res.serverError(err);
+            }
+
+            task.client_name = task.client.client_name
+            task.client_id = task.client.id
+
+
+            let op_name = '销售入账'
+            AccountService.accountReceivableDr(task.company,task.client_name,op_name,task.sale)
+
+            return res.ok(task);
+          })
       })
       .catch(err => res.serverError(err))
   },
+
+  finishTask:function (req,res) {
+    let companyId = req.param('company_id')
+    let clientName = req.param('client_name')
+    let taskId = req.param('task_id')
+
+    let task = {}
+
+    task.status = true
+
+    CheckService.checkClientName(companyId,clientName)
+      .then(_client => {
+        return Task.update({id: taskId, client_id: _client.id},task)
+      })
+      .then(_task => {
+        if (!_task[0] || _task[0].length === 0) return res.notFound({err: 'No task found in our record'});
+        Task.findOne({id:_task[0].id}).populate('client')
+          .then((task,err)=>{
+            if (err) {
+              return res.serverError(err);
+            }
+            task.client_name = task.client.client_name
+            task.client_id = task.client.id
+            return res.ok(task);
+          })
+      })
+      .catch(err => res.serverError(err))
+  }
 };
 

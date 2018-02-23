@@ -64,7 +64,7 @@ module.exports = {
           throw new Error('No client found');
         }
         _clients.map(c=>{
-          c.company_name = t.company.company_name
+          c.company_name = c.company.company_name
         })
         return res.ok(_clients);
       })
