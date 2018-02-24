@@ -64,6 +64,7 @@ module.exports.routes = {
   //tasks
   'POST /task': 'TaskController.create',
   'POST /tasks': 'TaskController.listAllTasksByCompany',
+  'POST /tasksByClient': 'TaskController.listAllTasksByClient',
   'DELETE /task': 'TaskController.delete',
   'DELETE /task/:id': 'TaskController.deleteTaskById',
   'PUT /task': 'TaskController.update',

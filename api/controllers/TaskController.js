@@ -43,7 +43,8 @@ module.exports = {
           company:companyId,
           maker:maker,
           make_time:make_time,
-          checker:checker
+          checker:checker,
+          saleOpDisable:false,
         });
       })
       .then(_task => {
@@ -151,6 +152,25 @@ module.exports = {
       .catch(err => res.serverError(err));
   },
 
+  listAllTasksByClient: function (req, res) {
+    let companyId = req.param('company_id')
+    let clientName = req.param('client_name')
+    let startDate = req.param('start_date')
+    let endDate = req.param('end_date')
+
+    CheckService.checkClientName(companyId,clientName)
+      .then(_client => {
+        return Task.find({client_id: _client.id,task_date:{'>=':startDate,'<=':endDate}})
+      })
+      .then(_tasks => {
+        if (!_tasks || _tasks.length === 0) {
+          throw new Error('No task found');
+        }
+        return res.ok(_tasks);
+      })
+      .catch(err => res.serverError(err));
+  },
+
   listAllTasksByClientDue: function (req, res) {
     let companyId = req.param('company_id')
     let clientName = req.param('client_name')
@@ -187,6 +207,7 @@ module.exports = {
     task.sale = sale
     task.checker = checker
     task.check_time = check_time
+    task.saleOpDisable = true
 
     CheckService.checkClientName(companyId,clientName)
       .then(_client => {
@@ -206,7 +227,6 @@ module.exports = {
 
             task.client_name = task.client.client_name
             task.client_id = task.client.id
-
 
             let op_name = '销售入账'
             AccountService.accountReceivableDr(task.company,task.client_name,op_name,task.sale)

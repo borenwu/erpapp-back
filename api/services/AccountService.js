@@ -29,8 +29,11 @@ const AccountService = {
           amount: amount,
           client: _client.id
         })
-        _client.receivable = Number(_client.receivable) - Number(amount)
-        _client.save()
+          .then(account => {
+            _client.receivable = Number(_client.receivable) - Number(amount)
+            _client.save()
+          })
+
       })
   }
 }

@@ -21,6 +21,7 @@ module.exports = {
     make_time:{type:'datetime'},
     checker:{type:'string'},
     check_time:{type:'datetime'},
+    saleOpDisable:{type:'boolean'},
 
 
     client: {model: 'client', columnName: 'client_id', required: true},
