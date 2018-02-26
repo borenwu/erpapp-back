@@ -160,12 +160,16 @@ module.exports = {
 
     CheckService.checkClientName(companyId,clientName)
       .then(_client => {
-        return Task.find({client_id: _client.id,task_date:{'>=':startDate,'<=':endDate}})
+        return Task.find({client_id: _client.id,task_date:{'>=':startDate,'<=':endDate}}).populate('client')
       })
       .then(_tasks => {
         if (!_tasks || _tasks.length === 0) {
           throw new Error('No task found');
         }
+        _tasks.map(t=>{
+          t.client_name = t.client.client_name
+          t.client_id = t.client.id
+        })
         return res.ok(_tasks);
       })
       .catch(err => res.serverError(err));
