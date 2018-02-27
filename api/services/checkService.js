@@ -33,6 +33,28 @@ const CheckService = {
     })
   },
 
+  checkSupplierName: function (company_id, supplierName) {
+    return new Promise((resolve, reject) => {
+      Supplier.findOne({supplier_name: supplierName, company_id: company_id})
+        .then((_supplier, err) => {
+          if (err) reject(err)
+          if (!_supplier) reject(new Error('Unable to find supplier record'))
+          else resolve(_supplier)
+        })
+    })
+  },
+
+  checkSupplierId: function (company_id, supplierId) {
+    return new Promise((resolve, reject) => {
+      Supplier.findOne({id: supplierId, company_id: company_id})
+        .then((_supplier, err) => {
+          if (err) reject(err)
+          if (!_supplier) reject(new Error('Unable to find supplier record'))
+          else resolve(_supplier)
+        })
+    })
+  },
+
 
 };
 

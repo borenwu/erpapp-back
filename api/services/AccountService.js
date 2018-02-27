@@ -35,6 +35,41 @@ const AccountService = {
           })
 
       })
+  },
+
+
+  accountPayableDr: function (companyId, supplierName, op_name, amount) {
+    CheckService.checkSupplierName(companyId, supplierName)
+      .then(_supplier => {
+        Account.create({
+          op_date: new Date(),
+          op_name: op_name,
+          direction: '借',
+          amount: amount,
+          supplier: _supplier.id
+        })
+          .then(account => {
+            _supplier.payable = Number(_supplier.payable) - Number(amount)
+            _supplier.save()
+          })
+      })
+  },
+
+  accountPayableCr: function (companyId, supplierName, op_name, amount) {
+    CheckService.checkClientName(companyId, supplierName)
+      .then(_supplier => {
+        Account.create({
+          op_date: new Date(),
+          op_name: op_name,
+          direction: '贷',
+          amount: amount,
+          client: _supplier.id
+        })
+          .then(account => {
+            _supplier.payable = Number(_supplier.payable) + Number(amount)
+            _supplier.save()
+          })
+      })
   }
 }
 

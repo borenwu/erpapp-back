@@ -8,6 +8,17 @@
 module.exports = {
   tableName: "suppliers",
   attributes: {
+    supplier_name: {type: 'string', required: true},
+    desc: {type: 'string'},
+    payable: {type: 'float'},
+
+
+    company: {model: 'company', columnName: 'company_id', required: true},
+
+    warehouseItems: {
+      collection: 'warehouseItem',
+      via: 'supplier'
+    },
 
     accounts:{
       collection:'account',

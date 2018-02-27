@@ -49,7 +49,7 @@ module.exports = {
       })
       .then(_client => {
         if (!_client || _client.length === 0) return res.notFound({ err: 'No client found in our record' });
-        return res.ok(`Client is deleted with name ${_client.client_name}`);
+        return res.ok({status:200,msg:'delete ok'});
       })
   },
 
@@ -57,7 +57,7 @@ module.exports = {
     let companyId = req.param('company_id')
     CheckService.checkCompanyId(companyId)
       .then(_company => {
-        return Client.find({ company_id: _company.id })
+        return Client.find({ company_id: _company.id }).populate('company')
       })
       .then(_clients => {
         if (!_clients || _clients.length === 0) {
