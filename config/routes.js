@@ -70,6 +70,14 @@ module.exports.routes = {
   'GET /supplier/:id': 'SupplierController.getSupplierById',
   'DELETE /supplier/:id': 'SupplierController.deleteSupplierById',
 
+  //warehouse
+  'POST /warehouse/item': 'WarehouseController.createItem',
+  'DELETE /warehouse/item': 'WarehouseController.deleteItem',
+  'POST /warehouse/items': 'WarehouseController.listAllItemsByCompany',
+  'PUT /warehouse/item': 'WarehouseController.updateItem',
+  'DELETE /warehouse/item/:id': 'WarehouseController.deleteItemById',
+
+
   //tasks
   'POST /task': 'TaskController.create',
   'POST /tasks': 'TaskController.listAllTasksByCompany',

@@ -9,11 +9,13 @@ const CheckService = require('../services/checkService')
 
 module.exports = {
 
-  createItem:function () {
+  /////////////////// warehouse item
+
+  createItem:function (req,res) {
     let companyId = req.param('company_id')
     let supplierName = req.param('supplier_name')
     let itemName = req.param('item_name')
-    let itemTyple = req.param('item_type')
+    let itemType = req.param('item_type')
     let desc = req.param('desc')
     let unit = req.param('unit')
     let balance = req.param('balance')
@@ -22,7 +24,7 @@ module.exports = {
       .then(_supplier => {
         return WarehouseItem.create({
           item_name:itemName,
-          item_type:itemTyple,
+          item_type:itemType,
           desc:desc,
           unit:unit,
           balance:balance,
@@ -38,7 +40,7 @@ module.exports = {
       .catch(err => res.serverError(err.message));
   },
 
-  deleteItem:function () {
+  deleteItem:function (req,res) {
     let companyId = req.param('company_id')
     let supplierName = req.param('supplier_name')
     let warehouseItemId = req.param('item_id')
@@ -153,6 +155,164 @@ module.exports = {
       })
       .catch(err => res.serverError(err));
   },
+
+  ////////////////////// warehouse item ops
+
+  createItemOp:function (req,res) {
+    let companyId = req.param('company_id')
+    let itemId = req.param('item_id')
+    let opDate = req.param('op_date')
+    let item_name = req.param('item_name')
+    let unit = req.param('unit')
+    let order = req.param('order')
+    let re = req.param('re')
+    let waste = req.param('waste')
+    let maker = req.param('maker')
+    let make_time = req.param('make_time')
+
+    CheckService.checkWarehouseItemId(companyId, itemId)
+      .then(_warehouseItem => {
+        return WarehouseOp.create({
+          op_date:opDate,
+          unit:unit,
+          order:order,
+          re:re,
+          waste:waste,
+          status:false,
+          maker:maker,
+          make_time:make_time,
+          warehouseItem:_warehouseItem.id,
+          company:companyId
+        })
+      })
+      .then(_warehouseItemOp=>{
+        if (!_warehouseItemOp) throw new Error('Unable to create new warehouse item')
+        return res.ok(_warehouseItemOp)
+      })
+      .catch(err => res.serverError(err.message));
+  },
+
+  deleteItemOp:function (req,res) {
+    let companyId = req.param('company_id')
+    let itemId = req.param('item_id')
+    let itemOpId = req.param('op_id')
+
+    CheckService.checkWarehouseItemId(companyId,itemId)
+      .then(_warehouseItem =>{
+        return WarehouseOp.destroy({id: itemOpId, warehouseItem_id: _warehouseItem.id})
+      })
+      .then(_warehouseOp => {
+        if (!_warehouseOp || _warehouseOp.length === 0) return res.notFound({err: 'No warehouse item op found in our record'});
+        return res.ok({status:200,msg:'delete ok'});
+      })
+  },
+
+  deleteItemOpById: function (req, res) {
+    let warehouseItemOpId = req.params.id
+
+    WarehouseOp.destroy({ id: warehouseItemOpId })
+      .then(_warehouseOp => {
+        if (!_warehouseOp || _warehouseOp.length === 0) return res.notFound({ err: 'No warehouse item op found in our record' });
+        return res.ok({status:200,msg:'delete ok'});
+      })
+  },
+
+  updateItemOp: function (req, res) {
+    let companyId = req.param('company_id')
+    let itemId = req.param('item_id')
+    let itemOpId = req.param('op_id')
+    let opDate = req.param('op_date')
+    let item_name = req.param('item_name')
+    let unit = req.param('unit')
+    let order = req.param('order')
+    let re = req.param('re')
+    let waste = req.param('waste')
+    let maker = req.param('maker')
+    let make_time = moment().format('YYYY-MM-DD')
+
+
+    let warehouseOp = {};
+
+    if(opDate){
+      warehouseOp.opDate = opDate
+    }
+    if(item_name){
+      warehouseOp.item_name = item_name
+    }
+    if(unit){
+      warehouseOp.unit = unit
+    }
+    if(order){
+      warehouseOp.order = order
+    }
+    if(re){
+      warehouseOp.re = re
+    }
+    if(waste){
+      warehouseOp.waste = waste
+    }
+    if(maker){
+      warehouseOp.maker = maker
+    }
+    if(make_time){
+      warehouseOp.make_time = make_time
+    }
+
+    CheckService.checkWarehouseItemId(companyId,itemId)
+      .then(_warehouseItem => {
+        return WarehouseOp.update({id: itemOpId, warehouseItem_id: _warehouseItem.id},warehouseOp)
+      })
+      .then(_warehouseOp => {
+        if (!_warehouseOp[0] || _warehouseOp[0].length === 0) return res.notFound({err: 'No warehouse item op found in our record'});
+        res.ok(_warehouseOp[0])
+      })
+      .catch(err => res.serverError(err))
+  },
+
+  listAllItemOpsByCompany:function (req,res) {
+    // console.log('listAllTasksByCompany')
+    let companyId = req.param('company_id')
+    let startDate = req.param('start_date')
+    let endDate = req.param('end_date')
+
+    WarehouseOp.find({company_id:companyId,op_date:{'>=':startDate,'<=':endDate}})
+      .then(_warehouseOps =>{
+        if (!_warehouseOps ) {
+          throw new Error('No ops found');
+        }
+        if(_warehouseOps.length === 0){
+          return res.ok({status:201,msg:'ops empty'});
+        }
+
+        return res.ok(_warehouseOps);
+      })
+      .catch(err => res.serverError(err));
+  },
+
+  checkItemOp:function (req,res) {
+    let companyId = req.param('company_id')
+    let itemId = req.param('item_id')
+    let itemOpId = req.param('op_id')
+    let checker = req.param('checker')
+    let check_time = moment().format('YYYY-MM-DD')
+
+
+    let warehouseOp = {
+      status:true,
+      checker:checker,
+      check_time:check_time
+    };
+
+    CheckService.checkWarehouseItemId(companyId,itemId)
+      .then(_warehouseItem => {
+        return WarehouseOp.update({id: itemOpId, warehouseItem_id: _warehouseItem.id},warehouseOp)
+      })
+      .then(_warehouseOp => {
+        if (!_warehouseOp[0] || _warehouseOp[0].length === 0) return res.notFound({err: 'No warehouse item op found in our record'});
+        res.ok(_warehouseOp[0])
+      })
+      .catch(err => res.serverError(err))
+  }
 
 
 }

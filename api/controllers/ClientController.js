@@ -60,8 +60,11 @@ module.exports = {
         return Client.find({ company_id: _company.id }).populate('company')
       })
       .then(_clients => {
-        if (!_clients || _clients.length === 0) {
-          throw new Error('No client found');
+        if (!_clients ) {
+          throw new Error('No task found');
+        }
+        if(_clients.length === 0){
+          return res.ok({status:201,msg:'clients empty'});
         }
         _clients.map(c=>{
           c.company_name = c.company.company_name

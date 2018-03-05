@@ -55,6 +55,17 @@ const CheckService = {
     })
   },
 
+  checkWarehouseItemId: function (company_id, itemId) {
+    return new Promise((resolve, reject) => {
+      WarehouseItem.findOne({id: itemId, company_id: company_id})
+        .then((_warehouseItem, err) => {
+          if (err) reject(err)
+          if (!_warehouseItem) reject(new Error('Unable to find warehouse item record'))
+          else resolve(_warehouseItem)
+        })
+    })
+  },
+
 
 };
 

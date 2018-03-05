@@ -10,12 +10,20 @@ module.exports = {
 
   attributes: {
     op_date: {type: 'date', required: true},
+    item_name:{type:'string',required:true},
     unit:{type:'string',required:true},
     order:{type:'float',required:true},
-    return:{type:'float',required:true},
+    re:{type:'float',required:true},
     use:{type:'float',required:true},
     waste:{type:'float',required:true},
+    status:{type:'boolean'},
+    maker:{type:'string'},
+    make_time:{type:'datetime'},
+    checker:{type:'string'},
+    check_time:{type:'datetime'},
+    saleOpDisable:{type:'boolean'},
 
     warehouseItem: {model: 'warehouseItem', columnName: 'warehouseItem_id', required: true},
+    company: {model: 'company', columnName: 'company_id', required: true},
   }
 };

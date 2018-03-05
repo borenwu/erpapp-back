@@ -19,6 +19,21 @@ module.exports = {
     tasks:{
       collection:'task',
       via:'company'
+    },
+
+    suppliers:{
+      collection:'supplier',
+      via:'company'
+    },
+
+    warehouseItems:{
+      collection:'warehouseItem',
+      via:'company'
+    },
+
+    warehouseOps:{
+      collection:'warehouseOp',
+      via:'company'
     }
   }
 };

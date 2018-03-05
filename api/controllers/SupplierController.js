@@ -61,8 +61,11 @@ module.exports = {
         return Supplier.find({ company_id: _company.id }).populate('company')
       })
       .then(_suppliers => {
-        if (!_suppliers || _suppliers.length === 0) {
-          throw new Error('No supplier found');
+        if (!_suppliers ) {
+          throw new Error('No task found');
+        }
+        if(_suppliers.length === 0){
+          return res.ok({status:201,msg:'suppliers empty'});
         }
         _suppliers.map(s=>{
           s.company_name = s.company.company_name
@@ -90,7 +93,7 @@ module.exports = {
     if (desc) {
       supplier.desc = desc;
     }
-    if (receivable) {
+    if (payable) {
       supplier.payable = payable;
     }
 

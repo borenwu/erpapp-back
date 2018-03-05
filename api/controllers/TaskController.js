@@ -6,6 +6,7 @@
  */
 const CheckService = require('../services/checkService')
 const AccountService = require('../services/AccountService')
+const moment = require('moment')
 
 module.exports = {
 
@@ -21,7 +22,7 @@ module.exports = {
     let sale = Number(req.param('sale')) || 0.0
     let maker = req.param('maker')
     let make_time = req.param('make_time')
-    let checker = req.param('checker') || ''
+
 
 
     if (!companyId) {
@@ -43,7 +44,6 @@ module.exports = {
           company:companyId,
           maker:maker,
           make_time:make_time,
-          checker:checker,
           saleOpDisable:false,
         });
       })
@@ -89,6 +89,7 @@ module.exports = {
     let desc = req.param('desc')
     let volume = Number(req.param('volume'))
     let maker = req.param('maker')
+    let make_time = moment().format('YYYY-MM-DD')
 
     if (!taskId) return res.badRequest({ err: 'task id is missing' });
 
@@ -108,6 +109,9 @@ module.exports = {
     }
     if(maker){
       task.maker = maker
+    }
+    if(make_time){
+      task.make_time = make_time
     }
 
     CheckService.checkClientName(companyId,clientName)
@@ -203,7 +207,7 @@ module.exports = {
     let price = req.param('price')
     let sale = req.param('sale')
     let checker = req.param('checker')
-    let check_time = new Date()
+    let check_time = moment().format('YYYY-MM-DD')
 
     let task = {}
 
