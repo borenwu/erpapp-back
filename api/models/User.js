@@ -11,10 +11,6 @@ module.exports = {
     login: {type:'boolean'},
     level:{type: 'integer'},
     company : { model :'company', columnName:'company_id', required:true}
-    // posts: {
-    //   collection: 'post',
-    //   via: 'user'
-    // }
   },
 
   // 创建（注册）用户前，对用户密码加密
@@ -29,4 +25,19 @@ module.exports = {
       })
   },
 
+  beforeUpdate: function(valuesToUpdate, cb){
+    if(valuesToUpdate.password){
+      bcrypt.hash(valuesToUpdate.password,10)
+        .then(hash=>{
+          valuesToUpdate.password = hash
+          cb()
+        })
+        .catch(err=>{
+          cb(err)
+        })
+    }
+    else {
+      cb()
+    }
+  }
 }

@@ -3,7 +3,10 @@ const bcrypt = require('bcrypt');
 const PasswordService = {
 
   checkPassword: function (inputPassword, rightPassword) {
-    return bcrypt.compare(inputPassword, rightPassword)
+    console.log(inputPassword)
+    console.log(rightPassword)
+    console.log(bcrypt.compareSync(inputPassword, rightPassword))
+    return bcrypt.compareSync(inputPassword, rightPassword)
   },
 
 
