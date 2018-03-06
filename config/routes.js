@@ -53,6 +53,7 @@ module.exports.routes = {
   'PUT /user':'userController.update',
   'PUT /user/password':'userController.changePassword',
   'DELETE /user':'userController.delete',
+  'DELETE /user/:id':'userController.deleteUserById',
   'POST /user/login': 'UserController.login',
   'POST /user/logout': 'UserController.logout',
 

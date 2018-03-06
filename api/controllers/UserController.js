@@ -1,5 +1,6 @@
 const CheckService = require('../services/checkService')
 const PasswordService = require('../services/PasswordService')
+const bcrypt = require('bcrypt');
 
 /**
  * UserController
@@ -61,15 +62,29 @@ module.exports = {
       })
   },
 
+  deleteUserById: function (req, res) {
+    let userId = req.params.id
+
+    User.destroy({ id: userId })
+      .then(_user => {
+        if (!_user || _user.length === 0) return res.notFound({ err: 'No user found in our record' });
+        return res.ok({status:200,msg:'delete ok'});
+      })
+  },
+
   listAllUsers: function (req, res) {
     let company_id = req.param('company_id')
     CheckService.checkCompanyId(company_id)
       .then(_company => {
         return User.find({company_id: _company.id})
       })
+
       .then(_users => {
-        if (!_users || _users.length === 0) {
-          throw new Error('No user found');
+        if (!_users ) {
+          throw new Error('No task found');
+        }
+        if(_users.length === 0){
+          return res.ok({status:201,msg:'clients empty'});
         }
         return res.ok(_users);
       })
@@ -125,10 +140,16 @@ module.exports = {
           return res.ok({status:404,msg:'old password is not right'})
         }
         else{
-          User.update({id:_user.id,company_id:company_id},user)
-            .then(_user=>{
-              if (!_user[0] || _user[0].length === 0) return res.notFound({err: 'No user found'});
-              return res.ok(_user[0]);
+          bcrypt.hash(newPassword,10)
+            .then(_hash=>{
+              let user = {
+                password:_hash
+              }
+              User.update({id:_user.id,company_id:company_id},user)
+                .then(_user=>{
+                  if (!_user[0] || _user[0].length === 0) return res.notFound({err: 'No user found'});
+                  return res.ok(_user[0]);
+                })
             })
         }
       })
