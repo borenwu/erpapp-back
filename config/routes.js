@@ -78,9 +78,18 @@ module.exports.routes = {
   //warehouse
   'POST /warehouse/item': 'WarehouseController.createItem',
   'DELETE /warehouse/item': 'WarehouseController.deleteItem',
+  'DELETE /warehouse/item/:id': 'WarehouseController.deleteItemById',
   'POST /warehouse/items': 'WarehouseController.listAllItemsByCompany',
   'PUT /warehouse/item': 'WarehouseController.updateItem',
-  'DELETE /warehouse/item/:id': 'WarehouseController.deleteItemById',
+
+  //warehouse item op
+  'POST /warehouse/itemop': 'WarehouseController.createItemOp',
+  'DELETE /warehouse/itemop': 'WarehouseController.deleteItemOp',
+  'DELETE /warehouse/itemop/:id': 'WarehouseController.deleteItemOpById',
+  'POST /warehouse/itemops': 'WarehouseController.listAllItemOpsByCompany',
+  'PUT /warehouse/itemop': 'WarehouseController.updateItemOp',
+
+
 
 
   //tasks

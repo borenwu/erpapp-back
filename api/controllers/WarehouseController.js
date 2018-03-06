@@ -163,10 +163,13 @@ module.exports = {
     let itemId = req.param('item_id')
     let opDate = req.param('op_date')
     let item_name = req.param('item_name')
+    let item_type = req.param('item_type')
     let unit = req.param('unit')
     let order = req.param('order')
     let re = req.param('re')
+    let use = req.param('use')
     let waste = req.param('waste')
+    let reason = req.param('reason')
     let maker = req.param('maker')
     let make_time = req.param('make_time')
 
@@ -174,10 +177,14 @@ module.exports = {
       .then(_warehouseItem => {
         return WarehouseOp.create({
           op_date:opDate,
+          item_name:item_name,
+          item_type:item_type,
           unit:unit,
           order:order,
           re:re,
+          use:use,
           waste:waste,
+          reason:reason,
           status:false,
           maker:maker,
           make_time:make_time,
@@ -223,10 +230,13 @@ module.exports = {
     let itemOpId = req.param('op_id')
     let opDate = req.param('op_date')
     let item_name = req.param('item_name')
+    let item_type = req.param('item_type')
     let unit = req.param('unit')
     let order = req.param('order')
     let re = req.param('re')
+    let use = req.param('use')
     let waste = req.param('waste')
+    let reason = req.param('reason')
     let maker = req.param('maker')
     let make_time = moment().format('YYYY-MM-DD')
 
@@ -239,6 +249,9 @@ module.exports = {
     if(item_name){
       warehouseOp.item_name = item_name
     }
+    if(item_type){
+      warehouseOp.item_type = item_type
+    }
     if(unit){
       warehouseOp.unit = unit
     }
@@ -248,8 +261,14 @@ module.exports = {
     if(re){
       warehouseOp.re = re
     }
+    if(use){
+      warehouseOp.use = use
+    }
     if(waste){
       warehouseOp.waste = waste
+    }
+    if(reason){
+      warehouseOp.reason = reason
     }
     if(maker){
       warehouseOp.maker = maker

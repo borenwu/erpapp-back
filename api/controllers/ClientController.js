@@ -61,7 +61,7 @@ module.exports = {
       })
       .then(_clients => {
         if (!_clients ) {
-          throw new Error('No task found');
+          throw new Error('No client found');
         }
         if(_clients.length === 0){
           return res.ok({status:201,msg:'clients empty'});
