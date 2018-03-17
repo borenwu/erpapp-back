@@ -6,6 +6,7 @@
  */
 
 const CheckService = require('../services/checkService')
+const moment = require('moment')
 
 module.exports = {
 
@@ -162,14 +163,12 @@ module.exports = {
     let companyId = req.param('company_id')
     let itemId = req.param('item_id')
     let opDate = req.param('op_date')
-    let item_name = req.param('item_name')
-    let item_type = req.param('item_type')
-    let unit = req.param('unit')
+    let supplier_name = req.param('supplier_name')
     let order = req.param('order')
     let re = req.param('re')
     let use = req.param('use')
     let waste = req.param('waste')
-    let reason = req.param('reason')
+    let reason = req.param('reason') || ''
     let maker = req.param('maker')
     let make_time = req.param('make_time')
 
@@ -177,9 +176,10 @@ module.exports = {
       .then(_warehouseItem => {
         return WarehouseOp.create({
           op_date:opDate,
-          item_name:item_name,
-          item_type:item_type,
-          unit:unit,
+          supplier_name:supplier_name,
+          item_name:_warehouseItem.item_name,
+          item_type:_warehouseItem.item_type,
+          unit:_warehouseItem.unit,
           order:order,
           re:re,
           use:use,
@@ -228,10 +228,7 @@ module.exports = {
     let companyId = req.param('company_id')
     let itemId = req.param('item_id')
     let itemOpId = req.param('op_id')
-    let opDate = req.param('op_date')
-    let item_name = req.param('item_name')
-    let item_type = req.param('item_type')
-    let unit = req.param('unit')
+
     let order = req.param('order')
     let re = req.param('re')
     let use = req.param('use')
@@ -243,18 +240,7 @@ module.exports = {
 
     let warehouseOp = {};
 
-    if(opDate){
-      warehouseOp.opDate = opDate
-    }
-    if(item_name){
-      warehouseOp.item_name = item_name
-    }
-    if(item_type){
-      warehouseOp.item_type = item_type
-    }
-    if(unit){
-      warehouseOp.unit = unit
-    }
+
     if(order){
       warehouseOp.order = order
     }

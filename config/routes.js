@@ -90,8 +90,6 @@ module.exports.routes = {
   'PUT /warehouse/itemop': 'WarehouseController.updateItemOp',
 
 
-
-
   //tasks
   'POST /task': 'TaskController.create',
   'POST /tasks': 'TaskController.listAllTasksByCompany',

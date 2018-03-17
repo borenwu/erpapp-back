@@ -142,7 +142,7 @@ module.exports = {
     Task.find({company_id:companyId,task_date:{'>=':startDate,'<=':endDate}}).populate('client')
       .then(_tasks =>{
         if (!_tasks ) {
-          throw new Error('No task found');
+          return res.ok({status:200,msg:'no tasks found'});
         }
         if(_tasks.length === 0){
           return res.ok({status:201,msg:'tasks empty'});

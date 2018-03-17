@@ -28,6 +28,29 @@ module.exports = {
       return res.badRequest({err: 'Invlaid user_name'});
     }
 
+    const role = {
+      manager:{
+        work:false,
+        finance:false,
+        warehouse:false,
+        views:false,
+        setting:false
+      },
+      accountant:{
+        work:false,
+        finance:false,
+        warehouse:false,
+        views:true,
+        setting:false
+      },
+      worker:{
+        work:false,
+        finance:true,
+        warehouse:true,
+        views:true,
+        setting:true
+      }
+    }
 
     CheckService.checkCompanyId(company_id)
       .then(_company => {
@@ -36,6 +59,7 @@ module.exports = {
           password: password,
           login: false,
           level:level,
+          role:role,
           company: _company.id
         });
 
@@ -167,19 +191,16 @@ module.exports = {
         return User.findOne({company: _company.id, user_name: user_name}).populate('company')
       })
       .then(_user => {
-        if (!_user) throw new Error('user not found')
-        // PasswordService.checkPassword(password,_user.password)
-        //   .then((err,res)=>{
-        //     console.log(res)
-        //   })
-        if (!PasswordService.checkPassword(password, _user.password)){
-          return res.ok({status:400,msg:'invalid password'})
-        }else{
-          _user.login = true
-          _user.save()
-          return res.ok(_user)
+        if (!_user) res.json({status:404,msg:'user not found'})
+        else{
+          if (!PasswordService.checkPassword(password, _user.password)){
+            return res.json({status:400,msg:'invalid password'})
+          }else{
+            _user.login = true
+            _user.save()
+            return res.ok({status:200,user:_user})
+          }
         }
-
       })
       .catch(err => res.serverError(err));
   },
@@ -194,11 +215,11 @@ module.exports = {
         return User.findOne({company: _company.id, user_name: user_name}).populate('company')
       })
       .then(_user => {
-        if (!_user) throw new Error('user not found');
+        if (!_user) res.json({status:404,msg:'user not found'})
 
         _user.login = false
         _user.save()
-        return res.ok(_user)
+        return res.ok({status:200})
       })
       .catch(err => res.serverError(err));
   },

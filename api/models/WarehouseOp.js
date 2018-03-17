@@ -10,6 +10,7 @@ module.exports = {
 
   attributes: {
     op_date: {type: 'date', required: true},
+    supplier_name:{type:'string',required:true},
     item_name:{type:'string',required:true},
     item_type:{type:'string',required:true},
     unit:{type:'string',required:true},
