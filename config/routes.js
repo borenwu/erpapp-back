@@ -49,6 +49,7 @@ module.exports.routes = {
 
   //user
   'POST /user': 'UserController.create',
+  'POST /user/admin':'UserController.createAdmin',
   'POST /users':'userController.listAllUsers',
   'PUT /user':'userController.update',
   'PUT /user/password':'userController.changePassword',

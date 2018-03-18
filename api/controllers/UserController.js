@@ -71,6 +71,56 @@ module.exports = {
       .catch(err => res.serverError(err.message));
   },
 
+  createAdmin:function (req,res) {
+    let company_id = req.param('company_id')
+    let user_name = 'admin'
+    let password = 'admin'
+    let level = 3
+
+    const role = {
+      manager:{
+        work:false,
+        finance:false,
+        warehouse:false,
+        views:false,
+        setting:false
+      },
+      accountant:{
+        work:false,
+        finance:false,
+        warehouse:false,
+        views:true,
+        setting:false
+      },
+      worker:{
+        work:false,
+        finance:true,
+        warehouse:true,
+        views:true,
+        setting:true
+      }
+    }
+
+    CheckService.checkCompanyId(company_id)
+      .then(_company => {
+        const admin = {
+          user_name:user_name,
+          password:password,
+          level:level,
+          role:role,
+          company:_company.id
+        }
+
+        return User.findOrCreate({user_name:'admin',company:_company.id},admin)
+      })
+      .then(_user => {
+        if (!_user) throw new Error('Unable to create new user')
+        return res.ok({status:200,user:_user})
+      })
+      .catch(err => res.serverError(err.message));
+
+  },
+
   delete: function (req, res) {
     let company_id = req.param('company_id')
     let userName = req.param('user_name')
